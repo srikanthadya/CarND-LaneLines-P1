@@ -1,3 +1,10 @@
+---
+layout:     post
+title:      Basic Lane Line Detection
+date:       2019-05-24
+summary:    Real time lane line detection using OpenCV
+categories: SDC Lane_Line_Detection Hough_Transform Edge_Detection Google_Colab
+---
 # **Finding Lane Lines on the Road**  
   
 One of the most basic aspects of driving a car (safely) is to make sure the car is within a lane. A good human driver does it almost involuntarily by constantly correcting to make sure the vehicle doesn't veer off into another vehicles path. What we humans do visually can be replicated in an autonomous vehicle using a series of Computer Vision techniques. The objective of this implementation and the process pipeline required to achieve this is explained below.  
@@ -33,15 +40,15 @@ The input for the lane detection task , as mentioned earlier, is a video stream 
 The basic idea behind lane line detection is the identification of the edges that constitute the lane. Although edge detection can be done on a RGB image, the effective edge is determined by the channel with the maximum gradient. So, for efficient edge detection, the first task is to convert to **gray** scale image.  
   
 Blurring is another important technique which helps reduce high frequency content in the image and hence reduces noise and helps in better edge extraction. There are several blurring methods available in openCV. The most commonly used method is the Gaussian Blur. In this method, a ** M x N ** kernel is convolved with the input image and the intensity of each pixel is modified to the weighted average of the intensities of the pixels in the kernel. The Gaussian function used is shown below  
-$G(x,y) = \frac{1}{2\pi\sigma^2}e^\frac{x^2+y^2}{2\sigma^2}$  
-here $x$ and $y$ are the distances from the kernel center and $\sigma$ is the standard deviation of the pixels in the Gaussian kernal  
+$$G(x,y) = \frac{1}{2\pi\sigma^2}e^\frac{x^2+y^2}{2\sigma^2}$$  
+here $$x$$ and $$y$$ are the distances from the kernel center and $\sigma$ is the standard deviation of the pixels in the Gaussian kernal  
   
 ### Canny Edge Detection  
 Canny edge detection is a technique used to identify gradients of any orientation in an image that helps us extract the structural information in an image. The algorithm internally performs the following four steps  
 1. Gaussian blurring to smooth the input image  
 2. Finding intensity gradients $G_x$ and $G_y$  
->$Edge Magnitude = \sqrt{G_{x}^2+G_{y}^2}$  
->$Edge Orientation (\theta) = tan^{-1}(\frac{G_y}{G_x})$  
+>$$Edge Magnitude = \sqrt{G_{x}^2+G_{y}^2}$$  
+>$$Edge Orientation (\theta) = tan^{-1}(\frac{G_y}{G_x})$$  
 3. Non Maxima suppression  
 >The entire image is scanned to check for any unwanted pixels that might not constitute an edge. Every pixel is compared with the pixels in a 3x3 neighborhood. If the magnitude of the central pixel is greater than the pixels in the gradient direction the central pixel is retained or else dropped.  
 4. Hysteresis Thresholding  
@@ -57,10 +64,10 @@ The same line when transformed in the $m-b$ space will be a point as shown in th
 
 ![m-b-space](Hough_Explained_files/hough-mb_parameter_space.png)
 
-Where this representation fails is when the line is vertical with an infinite slope. To over come this, the $\rho-\theta$ space is used. The same line in $\rho-\theta$  space can be represented as 
-$\rho = x*cos(\theta) + y*sin(\theta)$ 
+Where this representation fails is when the line is vertical with an infinite slope. To over come this, the $$\rho-\theta$$ space is used. The same line in $$\rho-\theta$$  space can be represented as 
+$$\rho = x*cos(\theta) + y*sin(\theta)$$ 
 
-In the image below we have two points (5,25) and (20,10) represented as edge points. If we plot all the $\rho$ values corresponding to $\theta$ varying from $[-90^0  to  90^0]$, we see that the resulting $\rho \theta$ curves for these two points intersect at $\rho = 21$ and $\theta = 45^0$
+In the image below we have two points (5,25) and (20,10) represented as edge points. If we plot all the $\rho$ values corresponding to $$\theta$$ varying from $$[-90^0  to  90^0]$$, we see that the resulting $$\rho \theta$$ curves for these two points intersect at $\rho = 21$ and $\theta = 45^0$
 ```
 import cv2
 import numpy as np 
@@ -108,8 +115,8 @@ The average slope of these line making up the left and right lines can be obtain
 
 Using the averaged line slopes and intercepts , we can find the x co-ordinate of the start and end of the line 
 
-$leftStartX = (leftStartY - leftAvgIntercept) / leftAvgSlope$
-$rightStartX = (rightStartY - rightAvgIntercept) / rightAvgSlope$
+$$leftStartX = (leftStartY - leftAvgIntercept) / leftAvgSlope$$
+$$rightStartX = (rightStartY - rightAvgIntercept) / rightAvgSlope$$
 
 These lines are drawn on the original image with a set transparency to highlight the identified lane lines 
 
